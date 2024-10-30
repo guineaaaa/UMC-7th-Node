@@ -1,16 +1,15 @@
 // const express=require('express');
 
-import express from 'express' //-> ES module
-const app=express()
-const port=3000
+import express from "express"; //-> ES module
+import { signup } from "./controllers/user.controller.js";
+const app = express();
+const port = 3000;
 
-app.get('/',(req, res)=>{
-    res.send('hello world, 안녕하세요');
-})
-
-app.get('/users/signUp',(req,res)=>{
-    res.send("회원가입");
+app.get("/", (req, res) => {
+  res.send("hello world, 안녕하세요");
 });
+
+app.post("/users/signup", signup);
 
 // 라우팅, 내부에 실행되는 함수가 컨트롤러
 
@@ -30,13 +29,12 @@ app.get('/users/signUp',(req,res)=>{
 // ====> MVC 패턴이 된다
 // 3 layer 계층!
 
-// import, export 
+// import, export
 
 // postman 사용해서 요청을 보내보자
 
-// 속도 차이???? 
+// 속도 차이????
 
-
-app.listen(port, ()=>{
-    console.log(`example app listening on port ${port}`)
-})
+app.listen(port, () => {
+  console.log(`example app listening on port ${port}`);
+});
