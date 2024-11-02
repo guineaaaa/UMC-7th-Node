@@ -1,17 +1,15 @@
 export const bodyToStore = (body) => {
   return {
-    store_id: body.store_id,
+    region_id: body.region_id,
     name: body.name,
-    store_category: body.store_category,
-    store_address: body.store_address,
+    address: body.address,
   };
 };
 
-export const responseFromStore = ({ store }) => {
+export const responseFromStore = (store) => {
   return {
-    store_id: store.store_id,
-    name: store.name,
-    store_category: store.store_category,
-    store_address: store.store_address,
+    region_id: store.region_id,
+    store_name: store.name,
+    store_address: store.address,
   };
 };

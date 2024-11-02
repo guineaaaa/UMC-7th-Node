@@ -2,24 +2,38 @@ import { pool } from "../db.config.js";
 
 // 가게 추가하기
 export const addStore = async (data) => {
+  // 디버깅
+  // console.log("Data to addStore: ", data);
+
   const connection = await pool.getConnection();
 
   try {
+    // 해당 지역이 존재하는지 확인
     const [region] = await connection.query(
-      `SELECT * FROM region WHERE name=?`,
-      [data.region]
+      `SELECT * FROM region WHERE id = ?`,
+      [data.region_id]
     );
 
     if (region.length === 0) {
-      throw new Error(`해당 지역(${data.region})을 찾을 수 없습니다.`);
+      throw new Error(`해당 지역(${data.region_id})을 찾을 수 없습니다.`);
     }
 
-    const query = `INSERT INTO store (name, category, address, region_id) VALUES (?, ?, ?, ?)`;
+    // 중복된 가게가 있는지 확인
+    const [existingStore] = await connection.query(
+      `SELECT * FROM store WHERE name = ? AND address = ?`,
+      [data.name, data.address]
+    );
+
+    if (existingStore.length > 0) {
+      throw new Error(`이미 존재하는 가게입니다: ${data.name}`);
+    }
+
+    // 중복이 없으면 가게를 추가
+    const query = `INSERT INTO store (name, address, region_id) VALUES (?, ?, ?)`;
     const [result] = await connection.query(query, [
       data.name,
-      data.category,
       data.address,
-      region[0].id,
+      data.region_id, // region[0].id 대신 data.region_id 사용
     ]);
 
     return result.insertId; // 삽입된 가게의 ID 반환
@@ -35,7 +49,7 @@ export const getStore = async (storeId) => {
   const connection = await pool.getConnection();
 
   try {
-    const [store] = await connection.query(`SELECT * FROM store WHERE id=?`, [
+    const [store] = await connection.query(`SELECT * FROM store WHERE id = ?`, [
       storeId,
     ]);
 
