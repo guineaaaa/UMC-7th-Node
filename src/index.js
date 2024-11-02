@@ -5,6 +5,7 @@ import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleStoreAdd } from "./controllers/store.controller.js";
 import { handleReviewAdd } from "./controllers/review.controller.js";
 import { handleMissionAdd } from "./controllers/mission.controller.js";
+import { handleMemberMissionAdd } from "./controllers/memberMission.controller.js";
 
 dotenv.config();
 
@@ -31,6 +32,9 @@ app.post("/api/v1/stores/:storeId/review", handleReviewAdd);
 
 // 3. 가게에 미션 추가하기 API
 app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
+
+// 4. 가게의 미션을 도전중인 미션에 추가 API
+app.post("/api/v1/stores/:storeId/missions/:missionId/in-progress",handleMemberMissionAdd);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
