@@ -71,7 +71,7 @@ export const getAllStoreReviews = async (storeId, cursor) => {
   const reviews = await prisma.review.findMany({
     select: {
       id: true,
-      body: true, // `content`를 `body`로 수정
+      body: true, 
       storeId: true,
       memberId: true,
       store: true,

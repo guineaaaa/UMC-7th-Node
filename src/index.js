@@ -6,7 +6,7 @@ import { handleStoreAdd } from "./controllers/store.controller.js";
 import { handleReviewAdd } from "./controllers/review.controller.js";
 import { handleMissionAdd } from "./controllers/mission.controller.js";
 import { handleMemberMissionAdd } from "./controllers/memberMission.controller.js";
-import { handleListStoreReviews } from "./controllers/store.controller.js";
+import { handleListStoreReviews } from "./controllers/review.controller.js";
 
 dotenv.config();
 

@@ -1,5 +1,7 @@
 import { addStore, getStore } from "../repositories/store.repository.js";
 import { responseFromStore } from "../dtos/store.dto.js";
+import { responseFromReview } from "../dtos/review.dto.js";
+import { getAllStoreReviews } from "../repositories/user.repository.js";
 
 export const storeAdd = async (data) => {
   const storeId = await addStore({
@@ -14,5 +16,5 @@ export const storeAdd = async (data) => {
 
 export const listStoreReviews = async (storeId) => {
   const reviews = await getAllStoreReviews(storeId);
-  return responseFromReviews(reviews);
+  return responseFromReview(reviews);
 };

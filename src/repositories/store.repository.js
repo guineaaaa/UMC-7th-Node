@@ -55,3 +55,5 @@ export const getStore = async (storeId) => {
     throw new Error(`가게 조회 중 오류 발생: ${err.message}`);
   }
 };
+
+

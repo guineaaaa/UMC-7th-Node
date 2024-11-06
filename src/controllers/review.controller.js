@@ -1,7 +1,7 @@
 import { bodyToReview } from "../dtos/review.dto.js";
 import { reviewAdd } from "../services/review.service.js";
 import { StatusCodes } from "http-status-codes";
-
+import { listStoreReviews } from "../services/store.service.js";
 export const handleReviewAdd = async (req, res, next) => {
   console.log("리뷰 추가를 요청했습니다.");
   console.log("body: ", req.body);
@@ -23,4 +23,12 @@ export const handleReviewAdd = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const handleListStoreReviews = async (req, res, next) => {
+  const reviews = await listStoreReviews(
+    parseInt(req.params.storeId),
+    typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
+  );
+  res.status(StatusCodes.OK).success(reviews);
 };
