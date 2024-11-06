@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodCategory {
+  id    Int @id @default(autoincrement())
+  name  String @db.VarChar(15)
+  
+  userFavorCategories MemberPrefer[]
+  stores Store[] // 수정: Store와의 관계 추가
+
+  @@map("food_category")
+}
+
+model Member {
+  id            Int @id @default(autoincrement())
+  name          String @db.VarChar(20)
+  gender        String @db.VarChar(10)
+  age           Int      
+  address       String @db.VarChar(40)
+  spec_address  String @db.VarChar(40)
+  phone_num     String @db.VarChar(15)
+  // status        String @db.VarChar(15)
+  // inactive_date DateTime @db.Date
+  // social_type   String @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.DateTime(6)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(6)
+  email         String @db.VarChar(50)
+  // point         Int
+  birth         String @db.VarChar(15)
+
+  userFavorCategories MemberPrefer[]
+  memberMissions MemberMission[]
+  reviews Review[]
+
+  @@map("member")
+}
+
+model MemberMission {
+  id         Int @id @default(autoincrement())
+  member     Member @relation(fields: [memberId], references: [id])
+  memberId   Int @map("member_id")
+  mission    Mission @relation(fields: [missionId], references: [id])
+  missionId  Int @map("mission_id")
+  status     String @db.VarChar(15)
+  created_at DateTime @default(now()) @db.DateTime(6)
+  updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  store      Store@relation(fields:[storeId], references:[id])
+  storeId    Int @map("store_id")
+
+  @@map("member_mission")
+}
+
+model MemberPrefer {
+  id             Int @id @default(autoincrement())
+  member         Member @relation(fields: [memberId], references: [id])
+  memberId       Int @map("memberId")
+  foodCategory   FoodCategory @relation(fields: [foodCategoryId], references: [id])
+  foodCategoryId Int @map("categoryId")
+  created_at     DateTime @default(now()) @db.DateTime(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  @@map("member_prefer")
+}
+
+model Mission {
+  id          Int @id @default(autoincrement())
+  store       Store @relation(fields: [storeId], references: [id])
+  storeId     Int @map("storeId")
+  reward      Int
+  deadline    DateTime
+  mission_spec String @db.Text
+  created_at  DateTime @default(now()) @db.DateTime(6)
+  updated_at  DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  memberMissions MemberMission[] // 수정: MemberMission과의 관계 추가
+
+  @@map("mission")
+}
+
+model Region {
+  id        Int @id @default(autoincrement())
+  name      String @db.VarChar(20)
+  created_at DateTime @default(now()) @db.DateTime(6)
+  updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  stores Store[] // 수정: Store와의 관계 추가
+
+  @@map("region")
+}
+
+model Review {
+  id        Int @id @default(autoincrement())
+  member    Member @relation(fields: [memberId], references: [id])
+  memberId  Int @map("memberId")
+  store     Store @relation(fields: [storeId], references: [id])
+  storeId   Int @map("storeId")
+  body      String @db.Text
+  score     Float
+  created_at DateTime @default(now()) @db.DateTime(6)
+
+  @@map("review")
+}
+
+model Store {
+  id         Int @id @default(autoincrement())
+  region     Region @relation(fields: [regionId], references: [id])
+  regionId   Int @map("regionId")
+  name       String @db.VarChar(50)
+  address    String @db.VarChar(50)
+  // score      Float
+  created_at DateTime @default(now()) @db.DateTime(6)
+  updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  memberMissions MemberMission[] 
+  reviews Review[]
+  missions Mission[] 
+  foodCategories FoodCategory[]
+
+  @@map("store")
+}
