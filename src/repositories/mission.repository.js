@@ -1,51 +1,50 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js"; // Prisma 클라이언트 불러오기
 
 // 미션 추가하기
 export const addMission = async (data) => {
-  const connection = await pool.getConnection();
-
-  // 해당 가게가 존재하는지 확인
   try {
-    const [store] = await connection.query(`SELECT * FROM store WHERE id=?`, [
-      data.store_id,
-    ]);
-    if (store.length == 0) {
-      throw new Error(`해당 가게(${data.store_id})를 찾을 수 없습니다.`);
+    // 해당 가게가 존재하는지 확인
+    const store = await prisma.store.findUnique({
+      where: {
+        id: data.storeId, // storeId로 수정
+      },
+    });
+
+    if (!store) {
+      throw new Error(`해당 가게(${data.storeId})를 찾을 수 없습니다.`);
     }
 
     // 미션 추가하기
-    const query = `INSERT INTO mission(store_id, reward, deadline, mission_spec, created_at) VALUES (?, ?, ?, ?, NOW())`;
-    const [result] = await connection.query(query, [
-      data.store_id,
-      data.reward,
-      data.deadline,
-      data.mission_spec,
-    ]);
-    return result.insertId; // 삽입된 미션의 ID를 반환
+    const newMission = await prisma.mission.create({
+      data: {
+        storeId: data.storeId, // storeId로 수정
+        reward: data.reward,
+        deadline: new Date(data.deadline), // Date 객체로 변환
+        mission_spec: data.mission_spec, // mission_spec -> missionSpec
+      },
+    });
+
+    return newMission.id; // 생성된 미션의 ID 반환
   } catch (err) {
     throw new Error(`미션 추가 중 오류 발생: ${err.message}`);
-  } finally {
-    connection.release();
   }
 };
 
 // 미션 조회하기
 export const getMission = async (missionId) => {
-  const connection = await pool.getConnection();
-
   try {
-    const [mission] = await connection.query(
-      `SELECT * FROM mission WHERE id=?`,
-      [missionId]
-    );
+    const mission = await prisma.mission.findUnique({
+      where: {
+        id: missionId, // missionId로 수정
+      },
+    });
 
-    if (mission.length == 0) {
+    if (!mission) {
       throw new Error(`해당 미션 ${missionId}를 찾을 수 없습니다.`);
     }
-    return mission[0]; // 미션 객체 반환
+
+    return mission; // 미션 객체 반환
   } catch (err) {
     throw new Error(`미션 조회 중 오류 발생: ${err.message}`);
-  } finally {
-    connection.release();
   }
 };

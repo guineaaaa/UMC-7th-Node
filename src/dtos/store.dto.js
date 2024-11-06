@@ -1,15 +1,17 @@
+// 클라이언트 요청 본문에서 데이터 변환
 export const bodyToStore = (body) => {
   return {
-    region_id: body.region_id,
+    regionId: body.regionId,
     name: body.name,
     address: body.address,
   };
 };
 
+// 데이터베이스에서 가져온 데이터에서 반환
 export const responseFromStore = (store) => {
   return {
-    region_id: store.region_id,
-    store_name: store.name,
-    store_address: store.address,
+    regionId: store.regionId,
+    name: store.name,
+    address: store.address,
   };
 };

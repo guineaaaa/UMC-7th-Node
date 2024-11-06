@@ -3,7 +3,7 @@ import { responseFromStore } from "../dtos/store.dto.js";
 
 export const storeAdd = async (data) => {
   const storeId = await addStore({
-    region_id: data.region_id,
+    regionId: data.regionId,
     name: data.name,
     address: data.address,
   });

@@ -1,19 +1,21 @@
-export const bodyToMission = (body, store_id) => {
+// 가게에 미션 추가하기 요청을 처리하는 DTO
+export const bodyToMission = (body, storeId) => {
   return {
-    store_id: store_id,
+    storeId: storeId,
     reward: body.reward,
     deadline: body.deadline,
     mission_spec: body.mission_spec,
   };
 };
 
+// 미션 응답을 처리하는 DTO
 export const responseFromMission = (data) => {
   return {
-    mission_id: data.mission_id,
-    store_id: data.store_id,
+    missionId: data.id,
+    storeId: data.storeId,
     reward: data.reward,
     deadline: data.deadline,
     mission_spec: data.mission_spec,
-    created_at: data.created_at,
+    createdAt: data.created_at,
   };
 };

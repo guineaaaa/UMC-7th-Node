@@ -1,18 +1,20 @@
-export const bodyToReview = (body, store_id) => {
+export const bodyToReview = (body, storeId) => {
   return {
-    member_id: body.user_id,
-    store_id: store_id,
+    memberId: body.memberId, 
+    storeId: storeId, 
     body: body.body,
     score: body.score,
   };
 };
 
+
 export const responseFromReview = (data) => {
   return {
-    review_id: data.review_id,
-    member_id: data.member_id,
+    reviewId: data.id, 
+    memberId: data.memberId, // 리뷰 작성자의 ID
+    storeId: data.storeId, // 리뷰가 작성된 가게의 ID
     body: data.body,
     score: data.score,
-    created_at: data.created_at,
+    created_at: data.created_at, // 리뷰 작성 시간
   };
 };

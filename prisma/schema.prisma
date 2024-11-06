@@ -14,7 +14,7 @@ datasource db {
 }
 
 model FoodCategory {
-  id    BigInt @id @default(autoincrement())
+  id    Int @id @default(autoincrement())
   name  String @db.VarChar(15)
   
   userFavorCategories MemberPrefer[]
@@ -24,7 +24,7 @@ model FoodCategory {
 }
 
 model Member {
-  id            BigInt @id @default(autoincrement())
+  id            Int @id @default(autoincrement())
   name          String @db.VarChar(20)
   gender        String @db.VarChar(10)
   age           Int      
@@ -48,27 +48,27 @@ model Member {
 }
 
 model MemberMission {
-  id         BigInt @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
   member     Member @relation(fields: [memberId], references: [id])
-  memberId   BigInt @map("member_id")
+  memberId   Int @map("member_id")
   mission    Mission @relation(fields: [missionId], references: [id])
-  missionId  BigInt @map("mission_id")
+  missionId  Int @map("mission_id")
   status     String @db.VarChar(15)
   created_at DateTime @default(now()) @db.DateTime(6)
   updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
 
   store      Store@relation(fields:[storeId], references:[id])
-  storeId    BigInt @map("store_id")
+  storeId    Int @map("store_id")
 
   @@map("member_mission")
 }
 
 model MemberPrefer {
-  id             BigInt @id @default(autoincrement())
+  id             Int @id @default(autoincrement())
   member         Member @relation(fields: [memberId], references: [id])
-  memberId       BigInt @map("member_id")
+  memberId       Int @map("memberId")
   foodCategory   FoodCategory @relation(fields: [foodCategoryId], references: [id])
-  foodCategoryId BigInt @map("category_id")
+  foodCategoryId Int @map("categoryId")
   created_at     DateTime @default(now()) @db.DateTime(6)
   updated_at     DateTime @default(now()) @updatedAt @db.DateTime(6)
 
@@ -76,9 +76,9 @@ model MemberPrefer {
 }
 
 model Mission {
-  id          BigInt @id @default(autoincrement())
+  id          Int @id @default(autoincrement())
   store       Store @relation(fields: [storeId], references: [id])
-  storeId     BigInt @map("store_id")
+  storeId     Int @map("storeId")
   reward      Int
   deadline    DateTime
   mission_spec String @db.Text
@@ -91,7 +91,7 @@ model Mission {
 }
 
 model Region {
-  id        BigInt @id @default(autoincrement())
+  id        Int @id @default(autoincrement())
   name      String @db.VarChar(20)
   created_at DateTime @default(now()) @db.DateTime(6)
   updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
@@ -102,11 +102,11 @@ model Region {
 }
 
 model Review {
-  id        BigInt @id @default(autoincrement())
+  id        Int @id @default(autoincrement())
   member    Member @relation(fields: [memberId], references: [id])
-  memberId  BigInt @map("member_id")
+  memberId  Int @map("memberId")
   store     Store @relation(fields: [storeId], references: [id])
-  storeId   BigInt @map("store_id")
+  storeId   Int @map("storeId")
   body      String @db.Text
   score     Float
   created_at DateTime @default(now()) @db.DateTime(6)
@@ -115,12 +115,12 @@ model Review {
 }
 
 model Store {
-  id         BigInt @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
   region     Region @relation(fields: [regionId], references: [id])
-  regionId   BigInt @map("region_id")
+  regionId   Int @map("regionId")
   name       String @db.VarChar(50)
   address    String @db.VarChar(50)
-  score      Float
+  // score      Float
   created_at DateTime @default(now()) @db.DateTime(6)
   updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
 
