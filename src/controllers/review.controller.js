@@ -26,9 +26,13 @@ export const handleReviewAdd = async (req, res, next) => {
 };
 
 export const handleListStoreReviews = async (req, res, next) => {
-  const reviews = await listStoreReviews(
-    parseInt(req.params.storeId),
-    typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
-  );
-  res.status(StatusCodes.OK).success(reviews);
+  try {
+    const storeId = parseInt(req.params.storeId); // storeId를 Int로 변환
+    const cursor = req.query.cursor ? parseInt(req.query.cursor) : 0; // cursor 파라미터 처리
+
+    const reviews = await listStoreReviews(storeId, cursor); // storeId와 cursor를 전달
+    res.status(StatusCodes.OK).json({ reviews }); // .json()을 사용하여 성공 응답 반환
+  } catch (error) {
+    next(error);
+  }
 };
