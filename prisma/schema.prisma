@@ -49,9 +49,9 @@ model Member {
 
 model MemberMission {
   id         Int @id @default(autoincrement())
-  member     Member @relation(fields: [memberId], references: [id])
+  member     Member? @relation(fields: [memberId], references: [id])
   memberId   Int @map("member_id")
-  mission    Mission @relation(fields: [missionId], references: [id])
+  mission    Mission? @relation(fields: [missionId], references: [id])
   missionId  Int @map("mission_id")
   status     String @db.VarChar(15)
   created_at DateTime @default(now()) @db.DateTime(6)

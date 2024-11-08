@@ -35,10 +35,7 @@ app.post("/api/v1/stores/:storeId/review", handleReviewAdd);
 app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
 
 // 4. 가게의 미션을 도전중인 미션에 추가 API
-app.post(
-  "/api/v1/stores/:storeId/missions/:missionId/in-progress",
-  handleMemberMissionAdd
-);
+app.post("/api/v1/missions/:missonId/in-progress", handleMemberMissionAdd);
 
 // ORM 사용해서 목록 API 만들어보기
 // 1. 가게에 속한 모든 리뷰를 조회할 수 있는 API

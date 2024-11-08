@@ -7,18 +7,26 @@ export const handleMemberMissionAdd = async (req, res, next) => {
   console.log("body: ", req.body);
 
   try {
-    const storeId = req.params.storeId; //URL 경로에서 storeId를 가져오기
-    const missionId = req.params.missionId; //URL 경로에서 missionId를 가져오기
+    // 요청 본문에서 memberId
+    const memberId = parseInt(req.body.memberId, 10);
 
-    // DTO를 사용해 body 데이터를 변환하기
-    const memberMissionData = bodyToMemberMission(req.body, storeId, missionId);
+    // URL 경로에서 missionId 추출
+    const missionId = parseInt(req.params.missionId, 10);
 
-    // 서비스 계층에 미션 상태 변경 요청을 보낸다.
+    // memberId와 missionId를 DTO로 변환
+    const memberMissionData = bodyToMemberMission(
+      req.body,
+      memberId,
+      missionId
+    );
+
+    // 변환된 데이터를 서비스 계층에 전달하여 미션 상태를 변경
     const updatedMission = await memberMissionAdd(memberMissionData);
 
-    // 상태 코드와 함께 응답 반환
+    // 변경된 미션 정보를 응답
     res.status(StatusCodes.OK).json({ result: updatedMission });
   } catch (error) {
+    console.error(`미션 상태 변경 중 오류 발생: ${error.message}`);
     next(error);
   }
 };
