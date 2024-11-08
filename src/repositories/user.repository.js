@@ -1,106 +1,85 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 // User 데이터 삽입
 export const addUser = async (data) => {
-  const conn = await pool.getConnection();
-
-  try {
-    const [confirm] = await pool.query(
-      `SELECT EXISTS(SELECT 1 FROM member WHERE email = ?) as isExistEmail;`, // 테이블 이름 수정
-      data.email
-    );
-
-    if (confirm[0].isExistEmail) {
-      return null;
-    }
-
-    const [result] = await pool.query(
-      `INSERT INTO member (email, name, gender, birth, address, spec_address, phone_num) VALUES (?, ?, ?, ?, ?, ?, ?);`, // 테이블 이름 수정
-      [
-        data.email,
-        data.name,
-        data.gender,
-        data.birth,
-        data.address,
-        data.detailAddress,
-        data.phoneNumber,
-      ]
-    );
-
-    return result.insertId;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
+  // 기존 사용자 확인
+  const user = await prisma.member.findFirst({ where: { email: data.email } });
+  if (user) {
+    return null; // 이미 존재하는 경우 null 반환
   }
+
+  // 사용자 생성
+  const createdUser = await prisma.member.create({
+    data: {
+      email: data.email,
+      name: data.name,
+      gender: data.gender,
+      birth: data.birth,
+      address: data.address,
+      spec_address: data.spec_address,
+      phone_num: data.phone_num,
+      age: data.age,
+    },
+  });
+  return createdUser.id; // 생성된 사용자 ID 반환
 };
 
 // 사용자 정보 얻기
 export const getUser = async (userId) => {
-  const conn = await pool.getConnection();
-
-  try {
-    const [user] = await pool.query(
-      `SELECT * FROM member WHERE id = ?;`,
-      userId
-    ); // 테이블 이름 수정
-
-    console.log(user);
-
-    if (user.length == 0) {
-      return null;
-    }
-
-    return user;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
-  }
+  // 사용자 조회
+  const user = await prisma.member.findFirstOrThrow({
+    where: { id: userId },
+  });
+  return user; // 사용자 정보 반환
 };
 
 // 음식 선호 카테고리 매핑
 export const setPreference = async (userId, foodCategoryId) => {
-  const conn = await pool.getConnection();
-
-  try {
-    await pool.query(
-      `INSERT INTO member_prefer (category_id, member_id) VALUES (?, ?);`,
-      [foodCategoryId, userId]
-    );
-
-    return;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
-  }
+  // 선호 카테고리 설정
+  await prisma.memberPrefer.create({
+    data: {
+      memberId: userId,
+      categoryId: foodCategoryId, // 필드명 수정
+    },
+  });
 };
 
 // 사용자 선호 카테고리 반환
 export const getUserPreferencesByUserId = async (userId) => {
-  const conn = await pool.getConnection();
+  // 사용자의 선호 카테고리 목록 조회
+  const preferences = await prisma.memberPrefer.findMany({
+    select: {
+      id: true,
+      memberId: true,
+      categoryId: true, // 필드명 수정
+      foodCategory: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    where: { memberId: userId },
+    orderBy: { categoryId: "asc" }, // 필드명 수정
+  });
 
-  try {
-    const [preferences] = await pool.query(
-      "SELECT mp.id, mp.category_id, mp.member_id, fc.name " +
-        "FROM member_prefer mp JOIN food_category fc ON mp.category_id = fc.id " +
-        "WHERE mp.member_id = ? ORDER BY mp.category_id ASC;",
-      userId
-    );
+  return preferences;
+};
 
-    return preferences;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
-  }
+// 목록 API
+export const getAllStoreReviews = async (storeId, cursor) => {
+  // 특정 가게의 리뷰 목록 조회하기 (커서 기반 페이지네이션)
+  const reviews = await prisma.review.findMany({
+    select: {
+      id: true,
+      body: true, 
+      storeId: true,
+      memberId: true,
+      store: true,
+      member: true,
+    },
+    where: { storeId: storeId, id: { gt: cursor } }, // greater than ID
+    orderBy: { id: "asc" }, // ID 오름차순 정렬
+    take: 5, // 최대 5개의 리뷰 반환
+  });
+  return reviews;
 };

@@ -48,3 +48,21 @@ export const getMission = async (missionId) => {
     throw new Error(`미션 조회 중 오류 발생: ${err.message}`);
   }
 };
+
+// 특정 가게의 미션을 조회하는 API
+export const getAllStoreMission = async (storeId, cursor) => {
+  const missions = await prisma.mission.findMany({
+    select: {
+      id: true,
+      store: true,
+      storeId: true,
+      reward: true,
+      deadline: true,
+      mission_spec: true,
+    },
+    where: { storeId: storeId, id: { gt: cursor } },
+    orderBy: { id: "asc" },
+    take: 5, //최대 5개의 미션 반환
+  });
+  return missions;
+};

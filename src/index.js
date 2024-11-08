@@ -2,6 +2,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { handleUserSignUp } from "./controllers/user.controller.js";
+import { handleStoreAdd } from "./controllers/store.controller.js";
+import { handleReviewAdd } from "./controllers/review.controller.js";
+import { handleMissionAdd } from "./controllers/mission.controller.js";
+import { handleMemberMissionAdd } from "./controllers/memberMission.controller.js";
+import { handleListStoreReviews } from "./controllers/review.controller.js";
 
 dotenv.config();
 
@@ -14,10 +19,39 @@ app.use(express.json()); // request의 본문을 json으로 해석할 수 있도
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("나의 서버입니당");
 });
 
+// 0. 회원가입 api
 app.post("/api/v1/users/signup", handleUserSignUp);
+
+// 1. 특정 지역에 가게 추가하기 api
+app.post("/api/v1/stores", handleStoreAdd);
+
+// 2. 가게에 리뷰 추가하기 api
+app.post("/api/v1/stores/:storeId/review", handleReviewAdd);
+
+// 3. 가게에 미션 추가하기 API
+app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
+
+// 4. 가게의 미션을 도전중인 미션에 추가 API
+app.post(
+  "/api/v1/stores/:storeId/missions/:missionId/in-progress",
+  handleMemberMissionAdd
+);
+
+// ORM 사용해서 목록 API 만들어보기
+// 1. 가게에 속한 모든 리뷰를 조회할 수 있는 API
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+
+// 2. 특정 가게의 미션 목록 조회할 수 있는 API
+app.get("/api/v1/stores/:storeId/missions");
+
+// 3. 내가 진행 중인 미션 목록 조회할 수 있는 API
+app.get("/api/v1/users/missions/inprogress");
+
+// 4. 내가 진행 중인 미션을 진행 완료로 바꾸기 API
+app.patch("/api/v1/users/missions/{mission_id}/completed");
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

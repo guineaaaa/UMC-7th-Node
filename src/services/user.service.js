@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import { responseFromUser } from "../dtos/user.dto.js";
 import {
   addUser,
@@ -34,4 +32,3 @@ export const userSignUp = async (data) => {
 
   return responseFromUser({ user, preferences });
 };
->>>>>>> 35dfe6634fb7e00438fd93f74a828113c2417ecd
