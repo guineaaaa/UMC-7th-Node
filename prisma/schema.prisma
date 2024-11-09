@@ -48,20 +48,18 @@ model Member {
 }
 
 model MemberMission {
-  id         Int @id @default(autoincrement())
-  member     Member @relation(fields: [memberId], references: [id])
-  memberId   Int @map("member_id")
-  mission    Mission @relation(fields: [missionId], references: [id])
-  missionId  Int @map("mission_id")
-  status     String @db.VarChar(15)
-  created_at DateTime @default(now()) @db.DateTime(6)
-  updated_at DateTime @default(now()) @updatedAt @db.DateTime(6)
-
-  store      Store@relation(fields:[storeId], references:[id])
-  storeId    Int @map("store_id")
-
-  @@map("member_mission")
+  id        Int      @id @default(autoincrement())
+  member    Member   @relation(fields: [memberId], references: [id])
+  memberId  Int
+  mission   Mission  @relation(fields: [missionId], references: [id])
+  missionId Int
+  store     Store    @relation(fields: [storeId], references: [id])
+  storeId   Int
+  status    String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }
+
 
 model MemberPrefer {
   id             Int @id @default(autoincrement())
@@ -82,6 +80,7 @@ model Mission {
   reward      Int
   deadline    DateTime
   mission_spec String @db.Text
+  status      String  @default("진행중") 
   created_at  DateTime @default(now()) @db.DateTime(6)
   updated_at  DateTime @default(now()) @updatedAt @db.DateTime(6)
 

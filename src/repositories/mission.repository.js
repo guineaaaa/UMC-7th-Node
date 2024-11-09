@@ -50,7 +50,7 @@ export const getMission = async (missionId) => {
 };
 
 // 특정 가게의 미션을 조회하는 API
-export const getAllStoreMission = async (storeId, cursor) => {
+export const getStoreMissions = async (storeId, cursor) => {
   const missions = await prisma.mission.findMany({
     select: {
       id: true,
@@ -60,9 +60,18 @@ export const getAllStoreMission = async (storeId, cursor) => {
       deadline: true,
       mission_spec: true,
     },
-    where: { storeId: storeId, id: { gt: cursor } },
-    orderBy: { id: "asc" },
+    where: {
+      storeId: storeId, // storeId는 이제 정수로 전달됨
+      id: {
+        gt: cursor,
+      },
+    },
+    orderBy: {
+      id: "asc",
+    },
     take: 5, //최대 5개의 미션 반환
   });
-  return missions;
+
+  const hasMore = missions.length === 5; // 5개보다 적으면 더 이상 미션이 없다는 의미
+  return { missions, hasMore };
 };

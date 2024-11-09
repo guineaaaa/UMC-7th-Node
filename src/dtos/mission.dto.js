@@ -1,4 +1,4 @@
-// 가게에 미션 추가하기 요청을 처리하는 DTO
+// 미션 dto
 export const bodyToMission = (body, storeId) => {
   return {
     storeId: storeId,

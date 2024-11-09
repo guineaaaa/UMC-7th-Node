@@ -2,23 +2,29 @@ import { bodyToMemberMission } from "../dtos/memberMission.dto.js";
 import { memberMissionAdd } from "../services/memberMission.service.js";
 import { StatusCodes } from "http-status-codes";
 
+// handleMemberMissionAdd 함수 수정
 export const handleMemberMissionAdd = async (req, res, next) => {
-  console.log("미션 상태 변경 요청을 받았습니다 ");
-  console.log("body: ", req.body);
-
   try {
-    const storeId = req.params.storeId; //URL 경로에서 storeId를 가져오기
-    const missionId = req.params.missionId; //URL 경로에서 missionId를 가져오기
+    const { status, memberId, storeId } = req.body; // storeId는 req.body에서 받는다
+    const { missionId } = req.params; // missionId는 URL 파라미터에서 받는다
 
-    // DTO를 사용해 body 데이터를 변환하기
+    console.log("미션 상태 변경 요청을 받았습니다");
+    console.log("body: ", req.body);
+    console.log("URL 파라미터: ", req.params);
+    console.log("Extracted storeId:", storeId); // storeId가 제대로 출력되는지 확인
+
+    if (!storeId) {
+      return res.status(400).json({ error: "storeId is required" });
+    }
+
     const memberMissionData = bodyToMemberMission(req.body, storeId, missionId);
+    console.log("memberMissionAdd에 전달된 데이터:", memberMissionData);
 
-    // 서비스 계층에 미션 상태 변경 요청을 보낸다.
-    const updatedMission = await memberMissionAdd(memberMissionData);
+    await memberMissionAdd(memberMissionData);
 
-    // 상태 코드와 함께 응답 반환
-    res.status(StatusCodes.OK).json({ result: updatedMission });
+    res.status(200).json({ message: "Mission status updated to in-progress" });
   } catch (error) {
+    console.error("미션 상태 변경 중 에러 발생:", error);
     next(error);
   }
 };

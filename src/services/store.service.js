@@ -3,8 +3,8 @@ import { responseFromStore } from "../dtos/store.dto.js";
 import { responseFromReview } from "../dtos/review.dto.js";
 import { getAllStoreReviews } from "../repositories/user.repository.js";
 
-import { responseFromMission } from "../dto/mission.dto.js";
-import { getAllStoreMission } from "../repositories/mission.repository.js";
+import { responseFromMission } from "../dtos/mission.dto.js";
+import { getStoreMissions } from "../repositories/mission.repository.js";
 
 export const storeAdd = async (data) => {
   const storeId = await addStore({
@@ -25,6 +25,6 @@ export const listStoreReviews = async (storeId) => {
 
 // 특정 가게의 미션 목록들 조회하기
 export const listStoreMissions = async (storeId) => {
-  const missions = await getAllStoreMission(storeId);
+  const missions = await getStoreMissions(storeId);
   return responseFromMission(missions);
 };

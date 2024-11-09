@@ -1,4 +1,8 @@
-import { addMission, getMission } from "../repositories/mission.repository.js";
+import {
+  addMission,
+  getMission,
+  getStoreMissions,
+} from "../repositories/mission.repository.js";
 import { responseFromMission } from "../dtos/mission.dto.js";
 
 // 미션 추가
@@ -24,5 +28,25 @@ export const missionAdd = async (data) => {
     return responseFromMission(mission);
   } catch (err) {
     throw new Error(`미션 추가 중 오류 발생: ${err.message}`);
+  }
+};
+
+// 특정 가게의 미션 목록 조회
+export const storeMissionsGet = async (storeId, cursor) => {
+  try {
+    // 주어진 storeId와 cursor를 사용하여 미션 목록을 조회합니다.
+    const missions = await getStoreMissions(storeId, cursor);
+
+    // 미션이 없다면 빈 배열을 반환
+    if (!missions || missions.length === 0) {
+      return { missions: [], hasMore: false };
+    }
+
+    // 다음 페이지를 확인할 수 있도록 마지막 미션의 ID를 cursor로 사용
+    const hasMore = missions.length === 5;
+
+    return { missions, hasMore };
+  } catch (error) {
+    throw new Error(`가게의 미션 목록 조회 중 오류 발생: ${error.message}`);
   }
 };
