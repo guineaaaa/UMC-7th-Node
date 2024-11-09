@@ -12,12 +12,19 @@ export const bodyToMemberMission = (body, storeId, missionId) => {
 
 export const responseFromMemberMission = (data) => {
   return {
-    id: data.id, // 멤버미션 ID
-    member_id: data.member_id, // 멤버의 ID
-    mission_id: data.mission_id, // 미션의 ID
-    store_id: data.store_id, // 가게 ID, 일관성을 위해 `store_id` 사용
-    status: data.status, // 현재 미션의 상태
-    created_at: data.created_at, // 생성 타임스탬프
-    updated_at: data.updated_at, // 업데이트 타임스탬프
+    missions: data.missions.map((mission) => ({
+      id: mission.id,
+      member_id: mission.member_id,
+      mission_id: mission.mission_id,
+      store_id: mission.store_id,
+      status: mission.status,
+      created_at: mission.created_at,
+      updated_at: mission.updated_at,
+    })),
+    pagination: {
+      cursor: data.missions.length
+        ? data.missions[data.missions.length - 1].id
+        : null, // 마지막 미션 ID를 커서로 사용
+    },
   };
 };

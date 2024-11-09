@@ -9,7 +9,10 @@ import {
   handleGetStoreMissions,
 } from "./controllers/mission.controller.js";
 
-import { handleMemberMissionAdd } from "./controllers/memberMission.controller.js";
+import {
+  handleMemberMissionAdd,
+  handleGetInProgressMemberMissions,
+} from "./controllers/memberMission.controller.js";
 import { handleListStoreReviews } from "./controllers/review.controller.js";
 
 dotenv.config();
@@ -26,6 +29,7 @@ app.get("/", (req, res) => {
   res.send("나의 서버입니당");
 });
 
+//------------------------------------------------------------------------
 // 0. 회원가입 api
 app.post("/api/v1/users/signup", handleUserSignUp);
 
@@ -41,6 +45,7 @@ app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
 // 4. 가게의 미션을 도전중인 미션에 추가 API
 app.post("/api/v1/missions/:missionId/in-progress", handleMemberMissionAdd);
 
+//------------------------------------------------------------------------
 // ORM 사용해서 목록 API 만들어보기
 // 1. 가게에 속한 모든 리뷰를 조회할 수 있는 API
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
@@ -49,7 +54,10 @@ app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 app.get("/api/v1/stores/:storeId/missions", handleGetStoreMissions);
 
 // 3. 내가 진행 중인 미션 목록 조회할 수 있는 API
-//app.get("/api/v1/users/missions/inprogress");
+app.get(
+  "/api/v1/users/missions/:memberId/inprogress",
+  handleGetInProgressMemberMissions
+);
 
 // 4. 내가 진행 중인 미션을 진행 완료로 바꾸기 API
 //app.patch("/api/v1/users/missions/{mission_id}/completed");

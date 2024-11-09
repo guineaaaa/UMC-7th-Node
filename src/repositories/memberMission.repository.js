@@ -55,7 +55,10 @@ export const getMemberMission = async (memberId, missionId) => {
   try {
     const addedMission = await prisma.memberMission.findFirst({
       where: {
-        AND: [{ member_id: memberId }, { mission_id: missionId }],
+        AND: [
+          { member_id: parseInt(memberId, 10) },
+          { mission_id: parseInt(missionId, 10) },
+        ],
       },
     });
 
@@ -66,5 +69,49 @@ export const getMemberMission = async (memberId, missionId) => {
     return addedMission;
   } catch (error) {
     throw new Error(`미션 조회 중 오류 발생: ${error.message}`);
+  }
+};
+
+export const getInProgressMissionsByMemberId = async (memberId, cursor) => {
+  try {
+    // memberId 파싱
+    const parsedMemberId = parseInt(memberId, 10);
+    if (isNaN(parsedMemberId)) {
+      throw new Error("Invalid memberId provided. Must be an integer.");
+    }
+
+    // 커서가 전달되지 않았다면 기본값 설정 (0부터 시작)
+    const parsedCursor = cursor ? parseInt(cursor, 10) : 0;
+
+    const missions = await prisma.memberMission.findMany({
+      where: {
+        memberId: parsedMemberId,
+        status: "진행중", // 진행 중인 미션만 조회
+        id: {
+          gt: parsedCursor, // 커서보다 큰 ID 값을 찾음
+        },
+      },
+      include: {
+        mission: true, // 미션 정보도 포함
+      },
+      orderBy: {
+        id: "asc", // ID 기준으로 오름차순 정렬
+      },
+      take: 5, // 한 번에 최대 5개의 미션 반환
+    });
+
+    // 진행 중인 미션 목록을 콘솔에 출력
+    if (missions.length === 0) {
+      console.log(`회원 ${parsedMemberId}의 진행 중인 미션이 없습니다.`);
+    } else {
+      console.log("진행 중인 미션 목록:", missions);
+    }
+
+    // 5개 미션을 반환하면 추가 미션이 있을 수 있음
+    const hasMore = missions.length === 5;
+
+    return { missions, hasMore }; // 페이지네이션 정보를 함께 반환
+  } catch (error) {
+    throw new Error(`진행 중인 미션 조회 중 오류 발생: ${error.message}`);
   }
 };
