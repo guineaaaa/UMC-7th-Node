@@ -115,3 +115,56 @@ export const getInProgressMissionsByMemberId = async (memberId, cursor) => {
     throw new Error(`진행 중인 미션 조회 중 오류 발생: ${error.message}`);
   }
 };
+
+export const updateMissionStatusToCompleted = async (
+  missionId,
+  memberId,
+  storeId
+) => {
+  try {
+    // 파싱된 값으로 사용
+    const parsedMissionId = parseInt(missionId, 10);
+    const parsedMemberId = parseInt(memberId, 10);
+    const parsedStoreId = parseInt(storeId, 10);
+
+    // 유효성 검사
+    if (
+      isNaN(parsedMissionId) ||
+      isNaN(parsedMemberId) ||
+      isNaN(parsedStoreId)
+    ) {
+      throw new Error(
+        "Invalid missionId, memberId, or storeId provided. Must be integers."
+      );
+    }
+
+    // 상태가 '진행중'인 미션을 찾아서 해당 id를 사용하여 업데이트
+    const mission = await prisma.memberMission.findFirst({
+      where: {
+        missionId: parsedMissionId,
+        memberId: parsedMemberId,
+        storeId: parsedStoreId,
+        status: "진행중", // 상태가 '진행중'인 미션만
+      },
+    });
+
+    if (!mission) {
+      throw new Error("진행중인 미션을 찾을 수 없습니다.");
+    }
+
+    // 상태를 '완료'로 업데이트
+    const updatedMission = await prisma.memberMission.update({
+      where: {
+        id: mission.id, // 찾은 미션의 id로 업데이트
+      },
+      data: {
+        status: "완료", // 상태를 '완료'로 변경
+        updated_at: new Date(), // 수정된 시간
+      },
+    });
+
+    return updatedMission;
+  } catch (error) {
+    throw new Error(`미션 상태 업데이트 실패: ${error.message}`);
+  }
+};

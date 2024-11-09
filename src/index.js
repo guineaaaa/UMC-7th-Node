@@ -12,6 +12,7 @@ import {
 import {
   handleMemberMissionAdd,
   handleGetInProgressMemberMissions,
+  handleChangeMissionStatus,
 } from "./controllers/memberMission.controller.js";
 import { handleListStoreReviews } from "./controllers/review.controller.js";
 
@@ -60,7 +61,10 @@ app.get(
 );
 
 // 4. 내가 진행 중인 미션을 진행 완료로 바꾸기 API
-//app.patch("/api/v1/users/missions/{mission_id}/completed");
+app.post(
+  "/api/v1/users/missions/:missionId/completed",
+  handleChangeMissionStatus
+);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

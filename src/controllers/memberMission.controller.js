@@ -2,6 +2,7 @@ import { bodyToMemberMission } from "../dtos/memberMission.dto.js";
 import {
   fetchInProgressMissions,
   memberMissionAdd,
+  changeMissionStatusToCompleted,
 } from "../services/memberMission.service.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -41,7 +42,10 @@ export const handleGetInProgressMemberMissions = async (req, res, next) => {
     console.log("사용자의 진행 중인 미션 목록 조회 요청을 받았습니다.");
     // 커서가 없으면 기본값 0 설정
     const currentCursor = cursor ? parseInt(cursor, 10) : 0;
-    const { missions, hasMore } = await fetchInProgressMissions(memberId, currentCursor);
+    const { missions, hasMore } = await fetchInProgressMissions(
+      memberId,
+      currentCursor
+    );
 
     // 진행 중인 미션을 console에 출력
     console.log("진행 중인 미션 목록:", missions);
@@ -50,5 +54,29 @@ export const handleGetInProgressMemberMissions = async (req, res, next) => {
   } catch (error) {
     console.error("진행 중인 미션 조회 중 에러 발생: ", error);
     next(error);
+  }
+};
+
+export const handleChangeMissionStatus = async (req, res, next) => {
+  const { missionId } = req.params;
+  const { memberId, storeId } = req.body; // request body에서 memberId, storeId를 받습니다.
+
+  try {
+    console.log("Received missionId:", missionId);
+    console.log("Received memberId:", memberId);
+    console.log("Received storeId:", storeId);
+    // 진행 중인 미션을 완료 상태로 변경
+    const result = await changeMissionStatusToCompleted(
+      missionId,
+      memberId,
+      storeId
+    );
+
+    res.status(200).json({
+      message: "미션이 완료 상태로 변경되었습니다.",
+      mission: result,
+    });
+  } catch (error) {
+    next(error); // 오류가 발생하면 에러 핸들러로 전달
   }
 };
