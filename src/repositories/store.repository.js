@@ -9,7 +9,7 @@ export const addStore = async (data) => {
     });
 
     if (!region) {
-      throw new Error(`해당 지역(${data.regionId})을 찾을 수 없습니다.`);
+      return null; // 지역이 존재하지 않으면 null 반환
     }
 
     // 중복된 가게가 있는지 확인
@@ -55,5 +55,3 @@ export const getStore = async (storeId) => {
     throw new Error(`가게 조회 중 오류 발생: ${err.message}`);
   }
 };
-
-

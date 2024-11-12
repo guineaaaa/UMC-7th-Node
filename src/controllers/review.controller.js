@@ -19,7 +19,7 @@ export const handleReviewAdd = async (req, res, next) => {
     // storeId를 bodyToReview에 전달
     const review = await reviewAdd(bodyToReview(req.body, storeId));
 
-    res.status(StatusCodes.CREATED).json({ result: review });
+    res.status(StatusCodes.OK).success(review);
   } catch (error) {
     next(error);
   }
@@ -31,7 +31,7 @@ export const handleListStoreReviews = async (req, res, next) => {
     const cursor = req.query.cursor ? parseInt(req.query.cursor) : 0; // cursor 파라미터 처리
 
     const reviews = await listStoreReviews(storeId, cursor); // storeId와 cursor를 전달
-    res.status(StatusCodes.OK).json({ reviews }); // .json()을 사용하여 성공 응답 반환
+    res.status(StatusCodes.OK).json(reviews); // .json()을 사용하여 성공 응답 반환
   } catch (error) {
     next(error);
   }

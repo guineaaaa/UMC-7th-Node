@@ -11,7 +11,8 @@ export const handleStoreAdd = async (req, res, next) => {
 
   try {
     const store = await storeAdd(bodyToStore(req.body));
-    res.status(StatusCodes.CREATED).json({ result: store });
+    // res.status(StatusCodes.CREATED).json({ result: store });
+    res.status(StatusCodes.OK).success(store);
   } catch (error) {
     next(error);
   }

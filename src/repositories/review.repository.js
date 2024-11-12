@@ -2,8 +2,6 @@ import { prisma } from "../db.config.js";
 
 // 리뷰 추가하기
 export const addReview = async (data) => {
-  
-
   // 해당 가게가 존재하는지 확인
   const store = await prisma.store.findUnique({
     where: { id: data.storeId },
@@ -12,7 +10,7 @@ export const addReview = async (data) => {
   console.log("storeId:", data.storeId);
 
   if (!store) {
-    throw new Error(`해당 가게(${data.storeId})를 찾을 수 없습니다.`);
+    return null;
   }
 
   // 리뷰 추가하기
