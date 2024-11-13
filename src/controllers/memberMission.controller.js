@@ -26,7 +26,9 @@ export const handleMemberMissionAdd = async (req, res, next) => {
 
     await memberMissionAdd(memberMissionData);
 
-    res.status(200).json({ message: "Mission status updated to in-progress" });
+    res
+      .status(200)
+      .success({ message: "Mission status updated to in-progress" });
   } catch (error) {
     console.error("미션 상태 변경 중 에러 발생:", error);
     next(error);
@@ -72,7 +74,7 @@ export const handleChangeMissionStatus = async (req, res, next) => {
       storeId
     );
 
-    res.status(200).json({
+    res.status(200).success({
       message: "미션이 완료 상태로 변경되었습니다.",
       mission: result,
     });

@@ -54,9 +54,8 @@ export class MissionCompletedError extends Error {
   }
 }
 
-//----------------------------------------------------------------------------------------------
-// 1) 리뷰 조회 시 사용자를 찾을 수 없을 시 오류 처리
-export class UserNotFound extends Error {
+// 사용자를 찾을 수 없을 시 오류 처리
+export class UserNotFoundError extends Error {
   errorCode = "U001";
 
   constructor(reason, data) {
@@ -67,34 +66,7 @@ export class UserNotFound extends Error {
 }
 
 // 2) 특정 가게 미션 목록 조회 시 가게를 찾을 수 없을 경우 오류 처리 -> StoreNotFound 로 통일
-export class StoreMissionNotFoundError extends Error {
-  errorCode = "SM001";
-
-  constructor(reason, data) {
-    super(reason);
-    this.reason = reason;
-    this.data = data;
-  }
-}
 
 // 3) 없는 사용자의 미션을 조회할 경우 오류 처리 -> UserNotFound로 통일
-export class UserMissionNotFoundError extends Error {
-  errorCode = "UM001";
-
-  constructor(reason, data) {
-    super(reason);
-    this.reason = reason;
-    this.data = data;
-  }
-}
 
 // 4) 이미 진행 완료인 미션을 완료 상태 변경 요청 시 오류 처리 -> MissionCOmpletedError 로 통일...
-export class MissionAlreadyCompletedError extends Error {
-  errorCode = "UM002";
-
-  constructor(reason, data) {
-    super(reason);
-    this.reason = reason;
-    this.data = data;
-  }
-}

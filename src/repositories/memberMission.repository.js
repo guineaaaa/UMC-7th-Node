@@ -27,7 +27,7 @@ export const addMissionToInProgress = async (memberId, missionId, storeId) => {
       if (currentStatus === "진행중") {
         throw new MissionInProgressError("해당 미션은 이미 도전 중 입니다.");
       }
-      if (currentStatus === "진행완료") {
+      if (currentStatus === "완료") {
         throw new MissionCompletedError("해당 미션은 이미 완료 되었습니다.");
       }
     }

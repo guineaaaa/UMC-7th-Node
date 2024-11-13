@@ -11,17 +11,16 @@ export const handleReviewAdd = async (req, res, next) => {
     const storeId = parseInt(req.params.storeId, 10); // storeId를 Int로 변환
 
     if (isNaN(storeId)) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "유효한 storeId가 아닙니다." });
+      throw new InvalidStoreIdError("유효한 storeId가 아닙니다.", {
+        storeId: req.params.storeId,
+      });
     }
-
     // storeId를 bodyToReview에 전달
     const review = await reviewAdd(bodyToReview(req.body, storeId));
 
     res.status(StatusCodes.OK).success(review);
   } catch (error) {
-    next(error);
+    next(error); // 에러 핸들링 미들웨어로 전달
   }
 };
 

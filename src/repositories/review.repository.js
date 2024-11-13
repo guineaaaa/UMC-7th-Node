@@ -1,5 +1,7 @@
 import { prisma } from "../db.config.js";
 
+import { UserNotFoundError } from "../errors.js";
+
 // 리뷰 추가하기
 export const addReview = async (data) => {
   // 해당 가게가 존재하는지 확인
@@ -33,7 +35,7 @@ export const getReview = async (reviewId) => {
   });
 
   if (!review) {
-    throw new Error(`해당 리뷰(${reviewId})를 찾을 수 없습니다.`);
+    throw new UserNotFoundError("해당 리뷰를 찾을 수 없습니다.");
   }
 
   return review; // 리뷰 객체 반환
