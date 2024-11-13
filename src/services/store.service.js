@@ -14,6 +14,7 @@ export const storeAdd = async (data) => {
     name: data.name,
     address: data.address,
   });
+
   if (storeId === null) {
     throw new InvaildRegionError("존재하지 않는 지역입니다.", {
       regionId: data.regionId,

@@ -41,7 +41,8 @@ export const getMission = async (missionId) => {
     });
 
     if (!mission) {
-      throw new Error(`해당 미션 ${missionId}를 찾을 수 없습니다.`);
+      return null;
+      // throw new Error(`해당 미션 ${missionId}를 찾을 수 없습니다.`);
     }
 
     return mission; // 미션 객체 반환

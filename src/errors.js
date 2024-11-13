@@ -65,6 +65,17 @@ export class UserNotFoundError extends Error {
   }
 }
 
+export class InvalidStoreIdError extends Error {
+  errorCode = "U001";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+//-------------------------------------
 // 2) 특정 가게 미션 목록 조회 시 가게를 찾을 수 없을 경우 오류 처리 -> StoreNotFound 로 통일
 
 // 3) 없는 사용자의 미션을 조회할 경우 오류 처리 -> UserNotFound로 통일

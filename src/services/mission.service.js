@@ -14,12 +14,6 @@ export const missionAdd = async (data) => {
       throw new Error("유효하지 않은 storeId 값입니다.");
     }
 
-    if (storeId === null) {
-      throw new StoreNotFoundError(
-        "존재하지 않는 가게에 미션 추가 요청을 했습니다."
-      );
-    }
-
     // 미션 추가
     const missionId = await addMission({
       storeId: storeId, // storeId가 Int로 전달됨
@@ -28,6 +22,11 @@ export const missionAdd = async (data) => {
       mission_spec: data.mission_spec, // mission_spec -> missionSpec
     });
 
+    if (missionId === null) {
+      throw new StoreNotFoundError(
+        "존재하지 않는 가게에 미션 추가 요청을 했습니다."
+      );
+    }
     // 추가된 미션을 조회
     const mission = await getMission(missionId);
 
