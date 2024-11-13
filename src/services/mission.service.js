@@ -4,6 +4,7 @@ import {
   getStoreMissions,
 } from "../repositories/mission.repository.js";
 import { responseFromMission } from "../dtos/mission.dto.js";
+import { StoreNotFoundError } from "../errors.js";
 
 // 미션 추가
 export const missionAdd = async (data) => {
@@ -11,6 +12,12 @@ export const missionAdd = async (data) => {
   try {
     if (isNaN(storeId)) {
       throw new Error("유효하지 않은 storeId 값입니다.");
+    }
+
+    if (storeId === null) {
+      throw new StoreNotFoundError(
+        "존재하지 않는 가게에 미션 추가 요청을 했습니다."
+      );
     }
 
     // 미션 추가

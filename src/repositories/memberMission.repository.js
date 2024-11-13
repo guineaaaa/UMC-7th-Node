@@ -1,4 +1,5 @@
 import { prisma } from "../db.config.js";
+import { MissionInProgressError, MissionCompletedError } from "../errors.js";
 
 // 이미 도전 중인지, 완료된 미션인지 검증 후, 미션을 도전 중으로 추가한다.
 export const addMissionToInProgress = async (memberId, missionId, storeId) => {
@@ -24,10 +25,10 @@ export const addMissionToInProgress = async (memberId, missionId, storeId) => {
     if (existingMission) {
       const currentStatus = existingMission.status;
       if (currentStatus === "진행중") {
-        throw new Error(`해당 미션 (${missionId})는 이미 도전 중 입니다.`);
+        throw new MissionInProgressError("해당 미션은 이미 도전 중 입니다.");
       }
       if (currentStatus === "진행완료") {
-        throw new Error(`해당 미션 (${missionId})는 이미 완료 되었습니다.`);
+        throw new MissionCompletedError("해당 미션은 이미 완료 되었습니다.");
       }
     }
 

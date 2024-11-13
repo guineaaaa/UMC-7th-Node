@@ -32,7 +32,7 @@ export class StoreNotFoundError extends Error {
   }
 }
 
-// 0-4) 이미 도전 중인 미션을 사용자 미션에 추가했을 시 오류 처리
+// 0-4) 이미 도전 중인 미션을 사용자 미션에 추가 요청추가했을 시 오류 처리
 export class MissionInProgressError extends Error {
   errorCode = "M001";
 
@@ -43,6 +43,18 @@ export class MissionInProgressError extends Error {
   }
 }
 
+// 0-4) +) 이미 완료된 미션을 사용자 미션에 추가 요청 했을 시 오류 처리
+export class MissionCompletedError extends Error {
+  errorCode = "M001";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+//----------------------------------------------------------------------------------------------
 // 1) 리뷰 조회 시 사용자를 찾을 수 없을 시 오류 처리
 export class UserNotFound extends Error {
   errorCode = "U001";
@@ -54,7 +66,7 @@ export class UserNotFound extends Error {
   }
 }
 
-// 2) 특정 가게 미션 목록 조회 시 가게를 찾을 수 없을 경우 오류 처리
+// 2) 특정 가게 미션 목록 조회 시 가게를 찾을 수 없을 경우 오류 처리 -> StoreNotFound 로 통일
 export class StoreMissionNotFoundError extends Error {
   errorCode = "SM001";
 
@@ -65,7 +77,7 @@ export class StoreMissionNotFoundError extends Error {
   }
 }
 
-// 3) 없는 사용자의 미션을 조회할 경우 오류 처리
+// 3) 없는 사용자의 미션을 조회할 경우 오류 처리 -> UserNotFound로 통일
 export class UserMissionNotFoundError extends Error {
   errorCode = "UM001";
 
@@ -76,7 +88,7 @@ export class UserMissionNotFoundError extends Error {
   }
 }
 
-// 4) 이미 진행 완료인 미션을 완료 상태 변경 요청 시 오류 처리
+// 4) 이미 진행 완료인 미션을 완료 상태 변경 요청 시 오류 처리 -> MissionCOmpletedError 로 통일...
 export class MissionAlreadyCompletedError extends Error {
   errorCode = "UM002";
 

@@ -11,7 +11,8 @@ export const addMission = async (data) => {
     });
 
     if (!store) {
-      throw new Error(`해당 가게(${data.storeId})를 찾을 수 없습니다.`);
+      // throw new Error(`해당 가게(${data.storeId})를 찾을 수 없습니다.`);
+      return null;
     }
 
     // 미션 추가하기
