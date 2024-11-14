@@ -9,34 +9,31 @@ import { StoreNotFoundError } from "../errors.js";
 // 미션 추가
 export const missionAdd = async (data) => {
   const storeId = parseInt(data.storeId, 10); // storeId를 Int로 변환
-  try {
-    if (isNaN(storeId)) {
-      throw new Error("유효하지 않은 storeId 값입니다.");
-    }
 
-    // 미션 추가
-    const missionId = await addMission({
-      storeId: storeId, // storeId가 Int로 전달됨
-      reward: data.reward,
-      deadline: data.deadline,
-      mission_spec: data.mission_spec, // mission_spec -> missionSpec
-    });
-
-    if (missionId === null) {
-      throw new StoreNotFoundError(
-        "존재하지 않는 가게에 미션 추가 요청을 했습니다."
-      );
-    }
-    // 추가된 미션을 조회
-    const mission = await getMission(missionId);
-
-    // DTO 형식에 맞게 응답 변환 후 반환
-    return responseFromMission(mission);
-  } catch (err) {
-    throw new Error(`미션 추가 중 오류 발생: ${err.message}`);
+  if (isNaN(storeId)) {
+    throw new Error("유효하지 않은 storeId 값입니다.");
   }
-};
 
+  // 미션 추가
+  const missionId = await addMission({
+    storeId: storeId, // storeId가 Int로 전달됨
+    reward: data.reward,
+    deadline: data.deadline,
+    mission_spec: data.mission_spec, // mission_spec -> missionSpec
+  });
+
+  if (missionId === null) {
+    throw new StoreNotFoundError(
+      "존재하지 않는 가게에 미션 추가 요청을 했습니다."
+    );
+  }
+
+  // 추가된 미션을 조회
+  const mission = await getMission(missionId);
+
+  // DTO 형식에 맞게 응답 변환 후 반환
+  return responseFromMission(mission);
+};
 // 특정 가게의 미션 목록 조회
 export const storeMissionsGet = async (storeId, cursor) => {
   try {

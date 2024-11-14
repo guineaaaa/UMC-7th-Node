@@ -47,7 +47,16 @@ export const addMissionToInProgress = async (memberId, missionId, storeId) => {
 
     return memberMission;
   } catch (error) {
-    throw new Error(`미션 도전 중 오류 발생: ${error.message}`);
+    if (
+      // 사용자 정의 에러일 경우에는 그 에러를 그대로 다시 throw하는 방식울 사용한다.
+      // 원래의 상태 코드,메세지가 제대로 전달되기 위해 에러 메세지를 두번 생성하는것을 수정.
+      error instanceof MissionInProgressError ||
+      error instanceof MissionCompletedError
+    ) {
+      throw error; // 사용자 정의 에러를 그대로 throw
+    } else {
+      throw new Error(`미션 도전 중 오류 발생: ${error.message}`);
+    }
   }
 };
 
