@@ -6,6 +6,83 @@ import { listStoreReviews } from "../services/store.service.js";
 import { InvalidStoreIdError } from "../errors.js";
 
 export const handleReviewAdd = async (req, res, next) => {
+  /*
+    #swagger.summary = '가게 리뷰 추가 API';
+    #swagger.parameters['storeId']={
+      in:'path',
+      required: true,
+      description: '리뷰 추가하려는 상점의 ID',
+      schema: { type: 'integer' }
+    };
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              memberId:{type:"integer"},
+              body:{type:"string"},
+              score:{type:"float"}
+            }
+          }
+        }
+      }
+    };
+    #swagger.responses[200] = {
+      description: "가게 리뷰 추가 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        memberId:{type:"integer"},
+                        body:{type:"string"},
+                        score:{type:"float"}
+                      }
+                    }
+                  },
+                  
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    #swagger.responses[400] = {
+      description: "가게 리뷰 추가 실패 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "FAIL" },
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: { type: "string", example: "R001" },
+                  reason: { type: "string" },
+                  data: { type: "object" }
+                }
+              },
+              success: { type: "object", nullable: true, example: null }
+            }
+          }
+        }
+      }
+    };
+  */
   console.log("리뷰 추가를 요청했습니다.");
   console.log("body: ", req.body);
 
@@ -28,6 +105,83 @@ export const handleReviewAdd = async (req, res, next) => {
 };
 
 export const handleListStoreReviews = async (req, res, next) => {
+  /*
+    #swagger.summary = '상점 리뷰 목록 조회 API';
+    #swagger.parameters['storeId']={
+      in:'path',
+      required: true,
+      description: '리뷰 조회하려는 상점의 ID',
+      schema: { type: 'integer' }
+    };
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              reviewId:{type:"integer"},
+              memberId:{type:"integer"},
+              body:{type:"string"}
+            }
+          }
+        }
+      }
+    };
+    #swagger.responses[200] = {
+      description: "상점 리뷰 목록 조회 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        reviewId:{type:"integer"},
+                        memberId:{type:"integer"},
+                        body:{type:"string"}
+                      }
+                    }
+                  },
+                  pagination: { type: "object", properties: { cursor: { type: "number", nullable: true } }}
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    #swagger.responses[400] = {
+      description: "상점 리뷰 목록 조회 실패 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "FAIL" },
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: { type: "string", example: "U001" },
+                  reason: { type: "string" },
+                  data: { type: "object" }
+                }
+              },
+              success: { type: "object", nullable: true, example: null }
+            }
+          }
+        }
+      }
+    };
+  */
   try {
     const storeId = parseInt(req.params.storeId); // storeId를 Int로 변환
     const cursor = req.query.cursor ? parseInt(req.query.cursor) : 0; // cursor 파라미터 처리
