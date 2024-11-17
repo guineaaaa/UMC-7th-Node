@@ -44,7 +44,7 @@ export const handleStoreAdd = async (req, res, next) => {
       }
     };
     #swagger.responses[400] = {
-      description: "특정 지역에 가게 추사 실패 응답",
+      description: "특정 지역에 가게 추가 실패 응답",
       content: {
         "application/json": {
           schema: {

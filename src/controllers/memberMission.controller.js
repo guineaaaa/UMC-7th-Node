@@ -6,7 +6,6 @@ import {
 } from "../services/memberMission.service.js";
 import { StatusCodes } from "http-status-codes";
 
-// handleMemberMissionAdd 함수 수정
 export const handleMemberMissionAdd = async (req, res, next) => {
   try {
     const { status, memberId, storeId } = req.body; // storeId는 req.body에서 받는다
@@ -37,6 +36,121 @@ export const handleMemberMissionAdd = async (req, res, next) => {
 
 // 진행 중인 미션 조회 핸들러
 export const handleGetInProgressMemberMissions = async (req, res, next) => {
+  /*
+    #swagger.summary = '내가 진행 중인 미션 목록 조회할 수 있는 API';
+    #swagger.parameters['memberId'] = {
+      in: 'path',
+      required: true,
+      description: '멤버 ID',
+      schema: { type: 'integer' }
+    };
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+                        id:{type:"integer"},
+                        missionId:{type:"integer"},
+                        storeId:{type:"integer"},
+                        status:{type:"string"},
+                        created_at: { type: "string", format: "date-time"  },
+                        updated_at: { type: "string", format: "date-time"  },
+                        mission:{
+                          type:"object",
+                          properties:{
+                            id:{type:"integer"},
+                            storeId:{type:"integer"},
+                            reward:{type:"integer"},
+                            deadline:{type:"string",  format: "date-time" },
+                            mission_spec:{type:"string"},
+                            status:{type:"string"},
+                            created_at:{type:"string",  format: "date-time"},
+                            updated_at:{type:"string",  format: "date-time"}
+                          }
+                        }
+                      }
+                    }
+          }
+        }
+      }
+    };
+    #swagger.responses[200] = {
+      description: "진행 중 미션 목록 조회 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id:{type:"integer"},
+                        missionId:{type:"integer"},
+                        storeId:{type:"integer"},
+                        status:{type:"string"},
+                        created_at: { type: "string", format: "date-time"  },
+                        updated_at: { type: "string", format: "date-time"  },
+                        mission:{
+                          type:"object",
+                          properties:{
+                            id:{type:"integer"},
+                            storeId:{type:"integer"},
+                            reward:{type:"integer"},
+                            deadline:{type:"string",  format: "date-time" },
+                            mission_spec:{type:"string"},
+                            status:{type:"string"},
+                            created_at:{type:"string",  format: "date-time"},
+                            updated_at:{type:"string",  format: "date-time"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  pagination: {
+                    type: "object",
+                    properties: {
+                      cursor: { type: "integer", nullable: true }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+  #swagger.responses[400] = {
+      description: "진행 중 미션 목록 조회 실패 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "FAIL" },
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: { type: "string", example: "U001" },
+                  reason: { type: "string" },
+                  data: { type: "object" }
+                }
+              },
+              success: { type: "object", nullable: true, example: null }
+            }
+          }
+        }
+      }
+    };
+  */
   const { memberId } = req.params;
   const { cursor } = req.query; // URL 쿼리에서 cursor 받기
 
@@ -60,6 +174,98 @@ export const handleGetInProgressMemberMissions = async (req, res, next) => {
 };
 
 export const handleChangeMissionStatus = async (req, res, next) => {
+  /*
+    #swagger.summary = '내가 진행 중인 미션을 진행 완료로 바꾸기 API';
+    #swagger.parameters['missionId'] = {
+      in: 'path',
+      required: true,
+      description: '진행 완료로 바꿀 미션 ID',
+      schema: { type: 'integer' }
+    };
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+                        id:{type:"integer"},
+                        memberId:{type:"integer"},
+                        storeId:{type:"integer"},
+                        status:{type:"string"},
+                        created_at: { type: "string", format: "date-time"  },
+                        updated_at: { type: "string", format: "date-time"  }
+              
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    #swagger.responses[200] = {
+      description: "진행 중인 미션을 진행 완료로 바꾸기 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id:{type:"integer"},
+                        memberId:{type:"integer"},
+                        storeId:{type:"integer"},
+                        status:{type:"string"},
+                        created_at: { type: "string", format: "date-time"  },
+                        updated_at: { type: "string", format: "date-time"  },
+                        
+                      }
+                    }
+                  },
+                  pagination: {
+                    type: "object",
+                    properties: {
+                      cursor: { type: "integer", nullable: true }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+  #swagger.responses[400] = {
+      description: "진행 중인 미션을 진행 완료로 바꾸기 실패 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "FAIL" },
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: { type: "string", example: "U001" },
+                  reason: { type: "string" },
+                  data: { type: "object" }
+                }
+              },
+              success: { type: "object", nullable: true, example: null }
+            }
+          }
+        }
+      }
+    };
+  */
   const { missionId } = req.params;
   const { memberId, storeId } = req.body; // request body에서 memberId, storeId를 받습니다.
 
