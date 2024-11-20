@@ -1,5 +1,5 @@
 import { prisma } from "../db.config.js";
-import { MissionInProgressError, MissionCompletedError } from "../errors.js";
+import { MissionStateError } from "../errors.js";
 
 // 이미 도전 중인지, 완료된 미션인지 검증 후, 미션을 도전 중으로 추가한다.
 export const addMissionToInProgress = async (memberId, missionId, storeId) => {
@@ -25,10 +25,10 @@ export const addMissionToInProgress = async (memberId, missionId, storeId) => {
     if (existingMission) {
       const currentStatus = existingMission.status;
       if (currentStatus === "진행중") {
-        throw new MissionInProgressError("해당 미션은 이미 도전 중 입니다.");
+        throw new MissionStateError("해당 미션은 이미 도전 중 입니다.");
       }
       if (currentStatus === "완료") {
-        throw new MissionCompletedError("해당 미션은 이미 완료 되었습니다.");
+        throw new MissionStateError("해당 미션은 이미 완료 되었습니다.");
       }
     }
 
@@ -50,8 +50,7 @@ export const addMissionToInProgress = async (memberId, missionId, storeId) => {
     if (
       // 사용자 정의 에러일 경우에는 그 에러를 그대로 다시 throw하는 방식울 사용한다.
       // 원래의 상태 코드,메세지가 제대로 전달되기 위해 에러 메세지를 두번 생성하는것을 수정.
-      error instanceof MissionInProgressError ||
-      error instanceof MissionCompletedError
+      error instanceof MissionStateErrorr
     ) {
       throw error; // 사용자 정의 에러를 그대로 throw
     } else {

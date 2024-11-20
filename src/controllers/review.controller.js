@@ -3,7 +3,7 @@ import { reviewAdd } from "../services/review.service.js";
 import { StatusCodes } from "http-status-codes";
 import { listStoreReviews } from "../services/store.service.js";
 
-import { InvalidStoreIdError } from "../errors.js";
+import { StoreNotFoundError } from "../errors.js";
 
 export const handleReviewAdd = async (req, res, next) => {
   /*
@@ -91,7 +91,7 @@ export const handleReviewAdd = async (req, res, next) => {
     const storeId = parseInt(req.params.storeId, 10); // storeId를 Int로 변환
 
     if (isNaN(storeId)) {
-      throw new InvalidStoreIdError("유효한 storeId가 아닙니다.", {
+      throw new StoreNotFoundError("유효한 storeId가 아닙니다.", {
         storeId: req.params.storeId,
       });
     }
