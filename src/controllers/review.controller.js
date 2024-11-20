@@ -23,7 +23,7 @@ export const handleReviewAdd = async (req, res, next) => {
             properties: {
               memberId:{type:"integer"},
               body:{type:"string"},
-              score:{type:"float"}
+              score:{type:"number", format:"float"}
             }
           }
         }
@@ -48,7 +48,7 @@ export const handleReviewAdd = async (req, res, next) => {
                       properties: {
                         memberId:{type:"integer"},
                         body:{type:"string"},
-                        score:{type:"float"}
+                        score:{type:"number", format:"float"}
                       }
                     }
                   },
