@@ -94,7 +94,7 @@ app.get("/openapi.json", async (req, res, next) => {
 // /oauth2/login/google: 로 접속하면 자동으로 Google 로그인 주소로 이동하여 사용자가 Google 로그인을 할 수 있도록 함
 // oauth2/callback/google: Google 로그인이 성공하면 자동으로 되돌아 오는 주소이다.
 // 여기에는 쿼리 파라미터로 전달된 code 값을 통해 Google API를 호출하여 사용자의 프로필 정도를 조회하고,
-// 이것을 Sessoin DB에 저장한다.
+// 이것을 Session DB에 저장한다.
 
 app.use(cors()); // cors 방식 허용
 app.use(express.static("public")); // 정적 파일 접근
@@ -136,7 +136,6 @@ app.get("/", (req, res) => {
   res.send("나의 서버입니당");
 });
 
-//------------------------------------------------------------------------
 // 0. 회원가입 api
 app.post("/api/v1/users/signup", handleUserSignUp);
 
@@ -152,8 +151,6 @@ app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
 // 4. 가게의 미션을 도전중인 미션에 추가 API
 app.post("/api/v1/missions/:missionId/in-progress", handleMemberMissionAdd);
 
-//------------------------------------------------------------------------
-// ORM 사용해서 목록 API 만들어보기
 // 1. 가게에 속한 모든 리뷰를 조회할 수 있는 API
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
