@@ -1,10 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-import { bodyToUser } from "../dtos/user.dto.js";
-import { userSignUp } from "../services/user.service.js";
+import { bodyToStore } from "../dtos/store.dto.js";
+import { storeAdd } from "../services/store.service.js";
 
-export const handleUserSignUp = async (req, res, next) => {
+// 가게 추가
+export const handleStoreAdd = async (req, res, next) => {
   /*
-    #swagger.summary = '회원 가입 API';
+    #swagger.summary = '특정 지역에 가게 추가하기 API';
     #swagger.requestBody = {
       required: true,
       content: {
@@ -12,22 +13,16 @@ export const handleUserSignUp = async (req, res, next) => {
           schema: {
             type: "object",
             properties: {
-              email: { type: "string" },
-              name: { type: "string" },
-              gender: { type: "string" },
-              birth: { type: "string", format: "date" },
-              age:{ type: "integer" },
-              address: { type: "string" },
-              spec_address: { type: "string" },
-              phone_num: { type: "string" },
-              preferences: { type: "array", items: { type: "number" } }
+              regionId:{type:"integer"},
+              name:{type:"string"},
+              address:{type:"string"}
             }
           }
         }
       }
     };
     #swagger.responses[200] = {
-      description: "회원 가입 성공 응답",
+      description: "특정 지역에 가게 추가 성공 응답",
       content: {
         "application/json": {
           schema: {
@@ -38,9 +33,9 @@ export const handleUserSignUp = async (req, res, next) => {
               success: {
                 type: "object",
                 properties: {
-                  email: { type: "string" },
-                  name: { type: "string" },
-                  preferCategory: { type: "array", items: { type: "string" } }
+                  regionId:{type:"integer"},
+                  name:{type:"string"},
+                  address:{type:"string"}
                 }
               }
             }
@@ -49,7 +44,7 @@ export const handleUserSignUp = async (req, res, next) => {
       }
     };
     #swagger.responses[400] = {
-      description: "회원 가입 실패 응답",
+      description: "특정 지역에 가게 추가 실패 응답",
       content: {
         "application/json": {
           schema: {
@@ -59,7 +54,7 @@ export const handleUserSignUp = async (req, res, next) => {
               error: {
                 type: "object",
                 properties: {
-                  errorCode: { type: "string", example: "U001" },
+                  errorCode: { type: "string", example: "R001" },
                   reason: { type: "string" },
                   data: { type: "object" }
                 }
@@ -71,11 +66,17 @@ export const handleUserSignUp = async (req, res, next) => {
       }
     };
   */
-  console.log("회원가입을 요청했습니다!");
-  console.log("body:", req.body); // 값이 잘 들어오나 확인하기 위한 테스트용
+  console.log("가게 추가를 요청했습니다");
+  console.log("body: ", req.body);
 
-  const user = await userSignUp(bodyToUser(req.body));
+  // 디버깅
+  // console.log("Converted store data: ", bodyToStore(req.body));
 
-  // res.status(StatusCodes.OK).json({ result: user });
-  res.status(StatusCodes.OK).success(user);
+  try {
+    const store = await storeAdd(bodyToStore(req.body));
+    // res.status(StatusCodes.CREATED).json({ result: store });
+    res.status(StatusCodes.OK).success(store);
+  } catch (error) {
+    next(error);
+  }
 };

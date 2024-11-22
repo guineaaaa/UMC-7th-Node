@@ -1,42 +1,200 @@
-// const express=require('express');
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import session from "express-session";
+import passport from "passport";
+import { googleStrategy } from "./auth.config.js";
+import { prisma } from "./db.config.js";
 
-import express from 'express' //-> ES module
-const app=express()
-const port=3000
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import { handleUserSignUp } from "./controllers/user.controller.js";
+import { handleStoreAdd } from "./controllers/store.controller.js";
+import {
+  handleReviewAdd,
+  handleListStoreReviews,
+} from "./controllers/review.controller.js";
+import {
+  handleMissionAdd,
+  handleGetStoreMissions,
+} from "./controllers/mission.controller.js";
+import {
+  handleMemberMissionAdd,
+  handleGetInProgressMemberMissions,
+  handleChangeMissionStatus,
+} from "./controllers/memberMission.controller.js";
 
-app.get('/',(req, res)=>{
-    res.send('hello world, 안녕하세요');
-})
+passport.use(googleStrategy); // passport 라이브러리에 정의한 로그인 방식 등록
+passport.serializeUser((user, done) => done(null, user)); // 세션에 사용자 정보를 저장할 때, 세션 정보를 가져올 때 사용
+passport.deserializeUser((user, done) => done(null, user));
 
-app.get('/users/signUp',(req,res)=>{
-    res.send("회원가입");
+import swaggerAutogen from "swagger-autogen";
+import swaggerUiExpress from "swagger-ui-express";
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT;
+/**
+ * 공통 응답을 사용할 수 있는 헬퍼 함수를 등록한다.
+ */
+app.use((req, res, next) => {
+  res.success = (success) => {
+    return res.json({ resultType: "SUCCESS", error: null, success });
+  };
+
+  res.error = ({ errorCode = "unknown", reason = null, data = null }) => {
+    return res.json({
+      resultType: "FAIL",
+      error: { errorCode, reason, data },
+      success: null,
+    });
+  };
+
+  next();
 });
 
-// 라우팅, 내부에 실행되는 함수가 컨트롤러
+/**
+ * Swager 세팅
+ */
+app.use(
+  "/docs",
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup(
+    {},
+    {
+      swaggerOptions: {
+        url: "/openapi.json",
+      },
+    }
+  )
+);
 
-// 라우팅을 한 파일에 때려박는건 비효율적인 방법이다.
-// routers라는 파일을 하나 만든다. 그 후에 index.js에서 라우팅을 한다, 라우팅 파일에서만 라우팅 처리를 한다.
+app.get("/openapi.json", async (req, res, next) => {
+  // #swagger.ignore = true
+  const options = {
+    openapi: "3.0.0",
+    disableLogs: true,
+    writeOutputFile: false,
+  };
+  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
+  const routes = ["./src/index.js"];
+  const doc = {
+    info: {
+      title: "UMC 7th",
+      description: "UMC 7th Node.js 테스트 프로젝트입니다.",
+    },
+    host: "localhost:3000",
+  };
 
-// app.use('/users', userRouters);
-// *** 예외 처리 *** 를 위해 app.use("/api/v1", );, v2 ,...이런식으로 처리를 해주자
+  const result = await swaggerAutogen(options)(outputFile, routes, doc);
+  res.json(result ? result.data : null);
+});
 
-// 사실은 컨트롤러도 분리를 해야한다 (파일 분리..)
-// 컨트롤러 폴더를 하나 생성한다
+// Passport 사용하기 위한 루트
+// /oauth2/login/google: 로 접속하면 자동으로 Google 로그인 주소로 이동하여 사용자가 Google 로그인을 할 수 있도록 함
+// oauth2/callback/google: Google 로그인이 성공하면 자동으로 되돌아 오는 주소이다.
+// 여기에는 쿼리 파라미터로 전달된 code 값을 통해 Google API를 호출하여 사용자의 프로필 정도를 조회하고,
+// 이것을 Session DB에 저장한다.
 
-// userController.js  ->  const login =()=>{ console.log("컨트롤러 분리");}
-// 사용할때는 함수 명만 가져온다
-// 또 컨트롤러도 분리할 수도있다!! DB 사용 등......
+app.use(cors()); // cors 방식 허용
+app.use(express.static("public")); // 정적 파일 접근
+app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
+app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
-// ====> MVC 패턴이 된다
-// 3 layer 계층!
+app.use(
+  session({
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+    },
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.EXPRESS_SESSION_SECRET,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, // ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  })
+);
 
-// import, export 
+app.get("/oauth2/login/google", passport.authenticate("google"));
+app.get(
+  "/oauth2/callback/google",
+  passport.authenticate("google", {
+    failureRedirect: "/oauth2/login/google",
+    failureMessage: true,
+  }),
+  (req, res) => res.redirect("/")
+);
 
-// postman 사용해서 요청을 보내보자
+app.use(passport.initialize());
+app.use(passport.session());
 
-// 속도 차이???? 
+app.get("/", (req, res) => {
+  console.log(req.user);
+  // console.log(req.session);
+  res.send("나의 서버입니당");
+});
 
+// 0. 회원가입 api
+app.post("/api/v1/users/signup", handleUserSignUp);
 
-app.listen(port, ()=>{
-    console.log(`example app listening on port ${port}`)
-})
+// 1. 특정 지역에 가게 추가하기 api
+app.post("/api/v1/stores", handleStoreAdd);
+
+// 2. 가게에 리뷰 추가하기 api
+app.post("/api/v1/stores/:storeId/review", handleReviewAdd);
+
+// 3. 가게에 미션 추가하기 API
+app.post("/api/v1/stores/:storeId/mission", handleMissionAdd);
+
+// 4. 가게의 미션을 도전중인 미션에 추가 API
+app.post("/api/v1/missions/:missionId/in-progress", handleMemberMissionAdd);
+
+// 1. 가게에 속한 모든 리뷰를 조회할 수 있는 API
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+
+// 2. 특정 가게의 미션 목록 조회할 수 있는 API
+app.get("/api/v1/stores/:storeId/missions", handleGetStoreMissions);
+
+// 3. 내가 진행 중인 미션 목록 조회할 수 있는 API
+app.get(
+  "/api/v1/users/missions/:memberId/inprogress",
+  handleGetInProgressMemberMissions
+);
+
+// 4. 내가 진행 중인 미션을 진행 완료로 바꾸기 API
+app.post(
+  "/api/v1/users/missions/:missionId/completed",
+  handleChangeMissionStatus
+);
+
+/*------------------------------------------------------------------------
+ * 전역 오류를 처리하기 위한 미들웨어
+ * Controller 내에서 별도로 처리하지 않은 오류가 발생할 경우,
+ * 모두 잡아서 공통된 오류 응답으로 내려준다.
+ * ------------------------------------------------------------------------
+ */
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  res.status(err.statusCode || 500).error({
+    errorCode: err.errorCode || "unknown",
+    reason: err.reason || err.message || null,
+    data: err.data || null,
+  });
+
+  // 모든 오류를 공통으로 로깅하기
+  console.log({
+    errorCode: err.errorCode || "unknown",
+    reason: err.reason || err.message || null,
+    data: err.data || null,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
