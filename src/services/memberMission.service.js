@@ -49,3 +49,4 @@ export const changeMissionStatusToCompleted = async (
 
   return updatedMission;
 };
+ 

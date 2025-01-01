@@ -99,13 +99,13 @@ app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형
 app.use(
   session({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     },
     resave: false,
     saveUninitialized: false,
     secret: process.env.EXPRESS_SESSION_SECRET,
     store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, // ms
+      checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
