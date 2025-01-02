@@ -336,6 +336,6 @@ export const handleChangeMissionStatus = async (req, res, next) => {
       mission: result,
     });
   } catch (error) {
-    next(error); // 오류가 발생하면 에러 핸들러로 전달
+    next(error);
   }
 };
